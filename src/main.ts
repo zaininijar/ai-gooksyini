@@ -21,7 +21,7 @@ const c = {
     yellow: "\x1b[33m",
     green: "\x1b[32m",
     red: "\x1b[31m",
-    magenta: "\x1b[35m",
+    magenta: "\x1b[38;2;124;58;237m",
     gray: "\x1b[90m",
 }
 

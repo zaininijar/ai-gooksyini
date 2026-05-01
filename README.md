@@ -1,6 +1,6 @@
-# 🤖 Gooksyini — AI Coding Assistant
+# Gooksyini — AI Coding Assistant
 
-![Gooksyini Banner](assets/banner.svg)
+<img src="assets/logo.png" height="150" alt="Gooksyini Logo">
 
 An agentic AI coding assistant that runs in your terminal. Powered by **free** LLM models via [OpenRouter](https://openrouter.ai).
 
@@ -8,11 +8,11 @@ Gooksyini can read, write, search, and edit files in your project — just descr
 
 ## Features
 
-- 🔧 **6 built-in tools** — read, write, search, replace files + list dirs + run shell commands
-- 🧠 **Agentic loop** — autonomously chains multiple tool calls to complete tasks
-- 💸 **Free models** — uses OpenRouter's free tier (Gemma 4, Llama, Qwen, etc.)
-- 🔄 **Model switching** — swap models on the fly with `/model <slug>`
-- 🎨 **Colored terminal UI** — readable logs for every tool call and result
+- **6 built-in tools** — read, write, search, replace files + list dirs + run shell commands
+- **Agentic loop** — autonomously chains multiple tool calls to complete tasks
+- **Free models** — uses OpenRouter's free tier (Gemma 4, Llama, Qwen, etc.)
+- **Model switching** — swap models on the fly with `/model <slug>`
+- **Colored terminal UI** — readable logs for every tool call and result
 
 ## Project Structure
 
