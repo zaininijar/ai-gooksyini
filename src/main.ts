@@ -8,22 +8,12 @@ import * as readline from "readline"
 import { Agent } from "./agent"
 import { OPENROUTER_API_KEY, DEFAULT_MODEL, WORKSPACE_DIR } from "./config"
 import { Model } from "./types"
+import { PrintBanner, ThemeColors } from "./decorations"
 
 // ─── Load models from JSON ───────────────────────────────────────────
 const MODELS_DATA: Model[] = require("../data/models.json").data
 
-// ─── Colors ──────────────────────────────────────────────────────────
-const c = {
-    reset: "\x1b[0m",
-    bold: "\x1b[1m",
-    dim: "\x1b[2m",
-    cyan: "\x1b[36m",
-    yellow: "\x1b[33m",
-    green: "\x1b[32m",
-    red: "\x1b[31m",
-    magenta: "\x1b[38;2;124;58;237m",
-    gray: "\x1b[90m",
-}
+const c = ThemeColors
 
 // ─── Model helpers ───────────────────────────────────────────────────
 function getFreeModels() {
@@ -74,24 +64,9 @@ function printModels() {
     console.log()
 }
 
-// ─── Banner ──────────────────────────────────────────────────────────
-function printBanner() {
-    console.log(`
-${c.bold}${c.magenta}   ██████╗  ██████╗  ██████╗ ██╗  ██╗███████╗██╗   ██╗██╗███╗   ██╗██╗
-  ██╔════╝ ██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝╚██╗ ██╔╝██║████╗  ██║██║
-  ██║  ███╗██║   ██║██║   ██║█████╔╝ ███████╗ ╚████╔╝ ██║██╔██╗ ██║██║
-  ██║   ██║██║   ██║██║   ██║██╔═██╗ ╚════██║  ╚██╔╝  ██║██║╚██╗██║██║
-  ╚██████╔╝╚██████╔╝╚██████╔╝██║  ██╗███████║   ██║   ██║██║ ╚████║██║
-   ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝╚═╝  ╚═══╝╚═╝${c.reset}
-
-  ${c.cyan}AI Coding Assistant${c.reset} ${c.dim}— by Ahmad Zaini Nijar${c.reset}
-  ${c.dim}Type ${c.green}/help${c.dim} for commands, or just start chatting.${c.reset}
-`)
-}
-
 // ─── Main REPL ───────────────────────────────────────────────────────
 async function main() {
-    printBanner()
+    PrintBanner()
 
     // Validate API key
     if (!OPENROUTER_API_KEY) {
