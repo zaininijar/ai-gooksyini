@@ -25,6 +25,10 @@ ai-gooksyini/
 │   │   └── index.ts         # OpenRouter API client
 │   ├── config/
 │   │   └── index.ts         # Configuration & system prompt
+│   ├── decorations/
+│   │   ├── index.ts         # Barrel export
+│   │   ├── banner.ts        # ASCII Banner logic
+│   │   └── colors.ts        # ANSI Color themes
 │   ├── tools/
 │   │   ├── index.ts         # Barrel export
 │   │   ├── definitions.ts   # OpenAI-format tool schemas
@@ -36,6 +40,8 @@ ai-gooksyini/
 │       └── tools.ts         # ToolResult, ToolDefinition
 ├── data/
 │   └── models.json          # OpenRouter model catalog
+├── assets/
+│   └── logo.png             # Project logo
 ├── .env.example
 ├── .gitignore
 ├── package.json

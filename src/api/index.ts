@@ -6,6 +6,7 @@
 import { OPENROUTER_API_KEY, OPENROUTER_BASE_URL, MAX_COMPLETION_TOKENS } from "../config"
 import { TOOL_DEFINITIONS } from "../tools/definitions"
 import { ChatMessage, ChatCompletionResponse } from "../types"
+import { logApiCall } from "./logger"
 
 // Re-export types so existing consumers don't break
 export type { ChatMessage, ToolCall, ChatCompletionResponse } from "../types"
@@ -34,6 +35,9 @@ export async function chatCompletion(
         body.tool_choice = "auto"
     }
 
+    // Log the request
+    logApiCall("request", { model, messages, tools: body.tools })
+
     const response = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
         method: "POST",
         headers: {
@@ -51,5 +55,9 @@ export async function chatCompletion(
     }
 
     const data = await response.json() as ChatCompletionResponse
+    
+    // Log the response
+    logApiCall("response", data)
+    
     return data
 }
