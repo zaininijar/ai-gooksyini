@@ -1,0 +1,194 @@
+/**
+ * Gooksyini — AI Coding Assistant
+ * Interactive REPL entry point.
+ */
+
+import "dotenv/config"   // Load .env before anything else
+import * as readline from "readline"
+import { Agent } from "./agent"
+import { OPENROUTER_API_KEY, DEFAULT_MODEL, WORKSPACE_DIR } from "./config"
+import { Model } from "./types"
+
+// ─── Load models from JSON ───────────────────────────────────────────
+const MODELS_DATA: Model[] = require("../data/models.json").data
+
+// ─── Colors ──────────────────────────────────────────────────────────
+const c = {
+    reset: "\x1b[0m",
+    bold: "\x1b[1m",
+    dim: "\x1b[2m",
+    cyan: "\x1b[36m",
+    yellow: "\x1b[33m",
+    green: "\x1b[32m",
+    red: "\x1b[31m",
+    magenta: "\x1b[35m",
+    gray: "\x1b[90m",
+}
+
+// ─── Model helpers ───────────────────────────────────────────────────
+function getFreeModels() {
+    return MODELS_DATA.filter(model => {
+        if (!model.endpoint) return false
+        // Check if all prices are zero
+        const hasPaidPrice = model.endpoint.display_pricing.some(p => Number(p.price) > 0)
+        return !hasPaidPrice
+    })
+}
+
+function getToolCapableModels() {
+    return getFreeModels().filter(model => {
+        return model.endpoint?.supports_tool_parameters === true
+    })
+}
+
+// ─── Slash commands ──────────────────────────────────────────────────
+function printHelp() {
+    console.log(`
+${c.bold}${c.cyan}═══ Gooksyini Commands ═══${c.reset}
+
+  ${c.green}/help${c.reset}           Show this help message
+  ${c.green}/models${c.reset}         List available free models with tool support
+  ${c.green}/model <slug>${c.reset}   Switch to a different model
+  ${c.green}/current${c.reset}        Show current model and stats
+  ${c.green}/clear${c.reset}          Clear conversation history
+  ${c.green}/exit${c.reset}           Quit the assistant
+`)
+}
+
+function printModels() {
+    const models = getToolCapableModels()
+    console.log(`\n${c.bold}${c.cyan}═══ Free Models with Tool Support (${models.length}) ═══${c.reset}\n`)
+
+    for (const model of models) {
+        const ctx = model.context_length >= 1000
+            ? `${Math.round(model.context_length / 1024)}K`
+            : `${model.context_length}`
+        const reasoning = model.supports_reasoning ? `${c.green}✓ reasoning${c.reset}` : ""
+        const slug = model.endpoint?.model_variant_slug || model.slug
+
+        console.log(
+            `  ${c.yellow}${slug}${c.reset}` +
+            `\n    ${c.dim}${model.short_name} | ${ctx} ctx | ${model.author_display_name}${c.reset} ${reasoning}`
+        )
+    }
+    console.log()
+}
+
+// ─── Banner ──────────────────────────────────────────────────────────
+function printBanner() {
+    console.log(`
+${c.bold}${c.magenta}   ██████╗  ██████╗  ██████╗ ██╗  ██╗███████╗██╗   ██╗██╗███╗   ██╗██╗
+  ██╔════╝ ██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝╚██╗ ██╔╝██║████╗  ██║██║
+  ██║  ███╗██║   ██║██║   ██║█████╔╝ ███████╗ ╚████╔╝ ██║██╔██╗ ██║██║
+  ██║   ██║██║   ██║██║   ██║██╔═██╗ ╚════██║  ╚██╔╝  ██║██║╚██╗██║██║
+  ╚██████╔╝╚██████╔╝╚██████╔╝██║  ██╗███████║   ██║   ██║██║ ╚████║██║
+   ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝╚═╝  ╚═══╝╚═╝${c.reset}
+
+  ${c.cyan}AI Coding Assistant${c.reset} ${c.dim}— powered by OpenRouter${c.reset}
+  ${c.dim}Type ${c.green}/help${c.dim} for commands, or just start chatting.${c.reset}
+`)
+}
+
+// ─── Main REPL ───────────────────────────────────────────────────────
+async function main() {
+    printBanner()
+
+    // Validate API key
+    if (!OPENROUTER_API_KEY) {
+        console.log(`${c.red}${c.bold}  ⚠ ERROR: OPENROUTER_API_KEY is not set.${c.reset}`)
+        console.log(`${c.dim}  Set it with: export OPENROUTER_API_KEY=sk-or-v1-your-key-here${c.reset}\n`)
+        process.exit(1)
+    }
+
+    // Show stats
+    const freeModels = getFreeModels()
+    const toolModels = getToolCapableModels()
+    console.log(`  ${c.dim}Workspace:${c.reset}  ${WORKSPACE_DIR}`)
+    console.log(`  ${c.dim}Model:${c.reset}      ${DEFAULT_MODEL}`)
+    console.log(`  ${c.dim}Free models:${c.reset} ${freeModels.length} total, ${toolModels.length} with tool support`)
+    console.log()
+
+    // Create agent
+    const agent = new Agent()
+
+    // Setup readline
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+        prompt: `${c.bold}${c.green}you ▶${c.reset} `,
+    })
+
+    rl.prompt()
+
+    rl.on("line", async (line: string) => {
+        const input = line.trim()
+
+        if (!input) {
+            rl.prompt()
+            return
+        }
+
+        // Handle slash commands
+        if (input.startsWith("/")) {
+            const [cmd, ...args] = input.split(" ")
+
+            switch (cmd.toLowerCase()) {
+                case "/help":
+                    printHelp()
+                    break
+
+                case "/models":
+                    printModels()
+                    break
+
+                case "/model":
+                    if (args.length === 0) {
+                        console.log(`${c.yellow}Usage: /model <slug>${c.reset}`)
+                        console.log(`${c.dim}Example: /model google/gemma-4-31b-it:free${c.reset}`)
+                    } else {
+                        agent.setModel(args.join(" "))
+                    }
+                    break
+
+                case "/current":
+                    console.log(`\n  ${c.cyan}Model:${c.reset}   ${agent.getModel()}`)
+                    console.log(`  ${c.cyan}History:${c.reset} ${agent.getHistoryLength()} messages\n`)
+                    break
+
+                case "/clear":
+                    agent.clearHistory()
+                    break
+
+                case "/exit":
+                case "/quit":
+                case "/q":
+                    console.log(`\n${c.dim}Goodbye! 👋${c.reset}\n`)
+                    process.exit(0)
+
+                default:
+                    console.log(`${c.yellow}Unknown command: ${cmd}. Type /help for available commands.${c.reset}`)
+            }
+
+            rl.prompt()
+            return
+        }
+
+        // Send message to agent
+        console.log()
+        try {
+            const response = await agent.chat(input)
+            console.log(`\n${c.bold}${c.cyan}gooksyini ▶${c.reset} ${response}\n`)
+        } catch (err: any) {
+            console.log(`\n${c.red}Error: ${err.message}${c.reset}\n`)
+        }
+
+        rl.prompt()
+    })
+
+    rl.on("close", () => {
+        console.log(`\n${c.dim}Goodbye! 👋${c.reset}\n`)
+        process.exit(0)
+    })
+}
+
+main()
