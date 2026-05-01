@@ -1,7 +1,8 @@
 {
   "name": "ai-gooksyini",
   "version": "1.0.0",
-  "description": "AI coding assistant powered by OpenRouter free models",
+  "description": "AI coding assistant by Ahmad Zaini Nijar, powered by OpenRouter free models",
+  "author": "Ahmad Zaini Nijar <zaininijar@gmail.com>",
   "main": "dist/src/main.js",
   "license": "MIT",
   "scripts": {

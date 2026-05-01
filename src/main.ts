@@ -84,7 +84,7 @@ ${c.bold}${c.magenta}   ██████╗  ██████╗  ███�
   ╚██████╔╝╚██████╔╝╚██████╔╝██║  ██╗███████║   ██║   ██║██║ ╚████║██║
    ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝╚═╝  ╚═══╝╚═╝${c.reset}
 
-  ${c.cyan}AI Coding Assistant${c.reset} ${c.dim}— powered by OpenRouter${c.reset}
+  ${c.cyan}AI Coding Assistant${c.reset} ${c.dim}— by Ahmad Zaini Nijar${c.reset}
   ${c.dim}Type ${c.green}/help${c.dim} for commands, or just start chatting.${c.reset}
 `)
 }

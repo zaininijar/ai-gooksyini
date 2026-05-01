@@ -1,11 +1,6 @@
 # 🤖 Gooksyini — AI Coding Assistant
 
-   ██████╗  ██████╗  ██████╗ ██╗  ██╗███████╗██╗   ██╗██╗███╗   ██╗██╗
-  ██╔════╝ ██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝╚██╗ ██╔╝██║████╗  ██║██║
-  ██║  ███╗██║   ██║██║   ██║█████╔╝ ███████╗ ╚████╔╝ ██║██╔██╗ ██║██║
-  ██║   ██║██║   ██║██║   ██║██╔═██╗ ╚════██║  ╚██╔╝  ██║██║╚██╗██║██║
-  ╚██████╔╝╚██████╔╝╚██████╔╝██║  ██╗███████║   ██║   ██║██║ ╚████║██║
-   ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝╚═╝  ╚═══╝╚═╝
+![Gooksyini Banner](assets/banner.svg)
 
 An agentic AI coding assistant that runs in your terminal. Powered by **free** LLM models via [OpenRouter](https://openrouter.ai).
 
@@ -136,6 +131,12 @@ All configuration is in `src/config.ts`:
 |----------|----------|-------------|
 | `OPENROUTER_API_KEY` | ✅ | Your OpenRouter API key |
 | `WORKSPACE_DIR` | ❌ | Override the workspace directory |
+
+## Author
+
+**Ahmad Zaini Nijar**
+- Email: [zaininijar@gmail.com](mailto:zaininijar@gmail.com)
+- GitHub: [@zaininijar](https://github.com/zaininijar)
 
 ## License
 
