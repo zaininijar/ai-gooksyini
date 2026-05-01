@@ -111,11 +111,35 @@ async function main() {
     // Create agent
     const agent = new Agent()
 
-    // Setup readline
+    // ─── Tab autocomplete ────────────────────────────────────────
+    const slashCommands = ["/help", "/models", "/model", "/current", "/clear", "/exit", "/quit"]
+    const modelSlugs = toolModels.map(m => m.endpoint?.model_variant_slug || m.slug)
+
+    function completer(line: string): [string[], string] {
+        const trimmed = line.trimStart()
+
+        // Autocomplete model slug after "/model "
+        if (trimmed.startsWith("/model ")) {
+            const partial = trimmed.slice(7) // after "/model "
+            const hits = modelSlugs.filter(s => s.startsWith(partial))
+            return [hits.length ? hits : modelSlugs, partial]
+        }
+
+        // Autocomplete slash commands
+        if (trimmed.startsWith("/")) {
+            const hits = slashCommands.filter(cmd => cmd.startsWith(trimmed))
+            return [hits.length ? hits : slashCommands, trimmed]
+        }
+
+        return [[], line]
+    }
+
+    // Setup readline with autocomplete
     const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
         prompt: `${c.bold}${c.green}you ▶${c.reset} `,
+        completer,
     })
 
     rl.prompt()
