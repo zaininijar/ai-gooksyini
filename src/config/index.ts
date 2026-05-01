@@ -5,7 +5,7 @@ export const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || ""
 export const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
 // ─── Agent Defaults ───────────────────────────────────────────────────
-export const DEFAULT_MODEL = "google/gemma-4-31b-it:free"
+export const DEFAULT_MODEL = process.env.DEFAULT_MODEL || "openrouter/owl-alpha"
 export const MAX_TOOL_ITERATIONS = 25  // max tool call loops before forcing a stop
 export const MAX_COMPLETION_TOKENS = 16384
 

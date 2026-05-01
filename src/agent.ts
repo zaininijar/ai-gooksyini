@@ -83,10 +83,6 @@ export class Agent {
             // Call the LLM
             log(colors.dim, "  ⏳", `Thinking... (iteration ${iterations})`)
 
-            if (!this.model) {
-                this.model = DEFAULT_MODEL
-            }
-
             let response
             try {
                 response = await chatCompletion(this.model, this.messages)
